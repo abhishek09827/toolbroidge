@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from toolbridge.decorator import Tool
-from toolbridge.translator import to_gemini
+from toolbroidge.decorator import Tool
+from toolbroidge.translator import to_gemini
 
 
 class GeminiProvider:

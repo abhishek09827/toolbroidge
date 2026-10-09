@@ -2,7 +2,7 @@ from typing import Literal
 
 import pytest
 
-from toolbridge.decorator import tool
+from toolbroidge.decorator import tool
 
 
 GOOD_DESCRIPTION = "Use when adding two values. Do not use for subtracting values."

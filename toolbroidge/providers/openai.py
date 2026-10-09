@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from toolbridge.decorator import Tool
-from toolbridge.structured import openai_response_format
-from toolbridge.translator import to_openai
+from toolbroidge.decorator import Tool
+from toolbroidge.structured import openai_response_format
+from toolbroidge.translator import to_openai
 
 
 class OpenAIProvider:

@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel
 
-from toolbridge.structured import Refusal, StructuredOutputError, complete_with_retrying_errors
+from toolbroidge.structured import Refusal, StructuredOutputError, complete_with_retrying_errors
 
 
 class Answer(BaseModel):

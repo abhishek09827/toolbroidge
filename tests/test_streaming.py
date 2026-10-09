@@ -1,6 +1,6 @@
 import pytest
 
-from toolbridge.streaming import PartialArgumentsError, ToolCallAccumulator
+from toolbroidge.streaming import PartialArgumentsError, ToolCallAccumulator
 
 
 def test_parse_early_trap_raises_before_end_signal():

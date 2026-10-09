@@ -1,7 +1,7 @@
 import pytest
 
-from toolbridge.decorator import tool
-from toolbridge.loop import Agent, AgentLoopError, ToolNotFoundError
+from toolbroidge.decorator import tool
+from toolbroidge.loop import Agent, AgentLoopError, ToolNotFoundError
 
 
 DESCRIPTION = "Use when echoing text. Do not use for changing external systems."

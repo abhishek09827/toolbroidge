@@ -1,5 +1,5 @@
-from toolbridge.decorator import tool
-from toolbridge.translator import to_anthropic, to_gemini, to_openai
+from toolbroidge.decorator import tool
+from toolbroidge.translator import to_anthropic, to_gemini, to_openai
 
 
 DESCRIPTION = "Use when adding two integers. Do not use for any other arithmetic."

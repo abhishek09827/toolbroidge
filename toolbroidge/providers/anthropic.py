@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from toolbridge.decorator import Tool
-from toolbridge.structured import anthropic_output_tool
-from toolbridge.translator import to_anthropic
+from toolbroidge.decorator import Tool
+from toolbroidge.structured import anthropic_output_tool
+from toolbroidge.translator import to_anthropic
 
 
 class AnthropicProvider:

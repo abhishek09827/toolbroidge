@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "toolbridge"
+name = "toolbroidge"
 version = "0.1.0"
 description = "Define Pydantic-backed tools once and run them across OpenAI, Anthropic, and Gemini."
 readme = "README.md"
@@ -21,7 +21,7 @@ gemini = ["google-generativeai"]
 all = ["openai", "anthropic", "google-generativeai"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["toolbridge"]
+packages = ["toolbroidge"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

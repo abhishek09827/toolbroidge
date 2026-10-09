@@ -5,9 +5,9 @@ import json
 import os
 from typing import Any
 
-from toolbridge import tool
-from toolbridge.parallel import ToolCall, execute_parallel
-from toolbridge.translator import to_anthropic, to_gemini, to_openai
+from toolbroidge import tool
+from toolbroidge.parallel import ToolCall, execute_parallel
+from toolbroidge.translator import to_anthropic, to_gemini, to_openai
 
 
 @tool("Use when adding two numbers. Do not use for non-arithmetic requests.")
@@ -45,7 +45,7 @@ def run_openai(prompt: str) -> dict[str, Any]:
 
     client = OpenAI()
     response = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+        model=os.getenv("OPENAI_MODEL", "gpt-6-luna"),
         messages=[{"role": "user", "content": prompt}],
         tools=[to_openai(item) for item in TOOLS.values()],
         tool_choice="auto",
@@ -87,7 +87,7 @@ def run_gemini(prompt: str) -> dict[str, Any]:
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     declarations = [to_gemini(item)["functionDeclarations"][0] for item in TOOLS.values()]
     model = genai.GenerativeModel(
-        os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
+        os.getenv("GEMINI_MODEL", "gemini-3.5-flash-lite"),
         tools=[{"function_declarations": declarations}],
     )
     response = model.generate_content(prompt)

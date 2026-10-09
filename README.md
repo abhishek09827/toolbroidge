@@ -1,25 +1,25 @@
-# toolbridge
+# toolbroidge
 
-toolbridge is a developer-facing Python library for defining tools once with type-annotated Python functions and Pydantic v2 validation, then translating and running those tools across OpenAI, Anthropic, or Gemini. It gives agent loops a small canonical tool model, strict provider schemas, concurrent tool execution, streaming argument reassembly, structured output retries, and explicit refusal handling without bringing in a larger orchestration framework.
+toolbroidge is a developer-facing Python library for defining tools once with type-annotated Python functions and Pydantic v2 validation, then translating and running those tools across OpenAI, Anthropic, or Gemini. It gives agent loops a small canonical tool model, strict provider schemas, concurrent tool execution, streaming argument reassembly, structured output retries, and explicit refusal handling without bringing in a larger orchestration framework.
 
 ## Installation
 
 ```bash
-pip install toolbridge
+pip install toolbroidge
 ```
 
 Provider clients are optional:
 
 ```bash
-pip install "toolbridge[openai]"
-pip install "toolbridge[anthropic]"
-pip install "toolbridge[gemini]"
+pip install "toolbroidge[openai]"
+pip install "toolbroidge[anthropic]"
+pip install "toolbroidge[gemini]"
 ```
 
 ## Minimal Example
 
 ```python
-from toolbridge import Agent, tool
+from toolbroidge import Agent, tool
 
 @tool("Use when adding two numbers. Do not use for non-arithmetic tasks.")
 def add(left: int, right: int) -> int:
@@ -41,7 +41,7 @@ print(run.output)
 
 ## Parallel Calls
 
-When a model response contains multiple tool calls, toolbridge fans them out with `ThreadPoolExecutor`, then correlates results by tool call id before the next model turn.
+When a model response contains multiple tool calls, toolbroidge fans them out with `ThreadPoolExecutor`, then correlates results by tool call id before the next model turn.
 
 ```text
 model response
@@ -57,7 +57,7 @@ Structured output accepts a Pydantic `BaseModel`. Parse errors and schema violat
 
 ```python
 from pydantic import BaseModel
-from toolbridge import Agent, Refusal
+from toolbroidge import Agent, Refusal
 
 class Answer(BaseModel):
     value: int
@@ -75,12 +75,10 @@ else:
 
 The repository includes a simple smoke-test app at `examples/provider_demo.py`. It defines two tools once with `@tool`, translates them to the selected provider's tool schema, asks the model to call tools, executes returned calls in parallel, and prints correlated results by tool call id.
 
-Install the package and provider extras:
+Install the package and the provider extras you want to test:
 
 ```bash
-python3 -m pip install -e ".[openai]"
-python3 -m pip install -e ".[anthropic]"
-python3 -m pip install -e ".[gemini]"
+python3 -m pip install -e ".[openai,anthropic,gemini]"
 ```
 
 Run with OpenAI:
@@ -107,48 +105,7 @@ python3 examples/provider_demo.py --provider gemini
 Optional model overrides:
 
 ```bash
-export OPENAI_MODEL="gpt-4o-mini"
+export OPENAI_MODEL="gpt-6-luna"
 export ANTHROPIC_MODEL="claude-3-5-haiku-latest"
-export GEMINI_MODEL="gemini-1.5-flash"
+export GEMINI_MODEL="gemini-3.5-flash-lite"
 ```
-
-## Deploying to PyPI
-
-1. Create PyPI and TestPyPI API tokens.
-2. Install release tools:
-
-```bash
-python3 -m pip install --upgrade build twine
-```
-
-3. Build the package:
-
-```bash
-python3 -m build
-```
-
-4. Check the artifacts:
-
-```bash
-python3 -m twine check dist/*
-```
-
-5. Rehearse on TestPyPI:
-
-```bash
-python3 -m twine upload --repository testpypi dist/*
-```
-
-6. Install from TestPyPI in a clean environment:
-
-```bash
-python3 -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ toolbridge
-```
-
-7. Publish to PyPI:
-
-```bash
-python3 -m twine upload dist/*
-```
-
-Use `__token__` as the username when `twine` prompts for credentials, and paste the API token as the password. Before publishing, make sure `pyproject.toml` has the intended version and that `dist/` only contains artifacts for that version.

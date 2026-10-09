@@ -1,7 +1,7 @@
 import time
 
-from toolbridge.decorator import tool
-from toolbridge.parallel import ToolCall, execute_parallel
+from toolbroidge.decorator import tool
+from toolbroidge.parallel import ToolCall, execute_parallel
 
 
 DESCRIPTION = "Use when sleeping briefly. Do not use for long running jobs."

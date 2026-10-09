@@ -62,7 +62,7 @@ def tool(description: str, *, consequential: bool = False) -> Callable[[Callable
             consequential=consequential,
             model=model,
         )
-        setattr(func, "__toolbridge_tool__", canonical)
+        setattr(func, "__toolbroidge_tool__", canonical)
         return canonical
 
     return decorate
