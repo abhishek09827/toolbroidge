@@ -2,6 +2,12 @@
 
 toolbroidge is a developer-facing Python library for defining tools once with type-annotated Python functions and Pydantic v2 validation, then translating and running those tools across OpenAI, Anthropic, or Gemini. It gives agent loops a small canonical tool model, strict provider schemas, concurrent tool execution, streaming argument reassembly, structured output retries, and explicit refusal handling without bringing in a larger orchestration framework.
 
+
+
+https://github.com/user-attachments/assets/eb42f01a-7f50-4f5f-bf50-43f1917a1bcc
+
+
+
 ## Installation
 
 ```bash
