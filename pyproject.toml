@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "toolbridge"
+version = "0.1.0"
+description = "Define Pydantic-backed tools once and run them across OpenAI, Anthropic, and Gemini."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "toolbridge", email = "toolbridge" }]
+dependencies = [
+  "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+openai = ["openai"]
+anthropic = ["anthropic"]
+gemini = ["google-generativeai"]
+all = ["openai", "anthropic", "google-generativeai"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["toolbridge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
