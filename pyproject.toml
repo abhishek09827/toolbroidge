@@ -9,7 +9,7 @@ description = "Define Pydantic-backed tools once and run them across OpenAI, Ant
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-authors = [{ name = "toolbridge", email = "toolbridge" }]
+authors = [{ name = "Abhishek Kaushik", email = "abhishekk09827@gmail.com" }]
 dependencies = [
   "pydantic>=2.0",
 ]
