@@ -31,12 +31,29 @@ def test_anthropic_translation_exact_shape():
 
 
 def test_gemini_translation_exact_shape():
+    expected_parameters = {
+        "properties": {
+            "left": {"type": "integer"},
+            "right": {"type": "integer"},
+        },
+        "required": ["left", "right"],
+        "type": "object",
+    }
     assert to_gemini(add) == {
         "functionDeclarations": [
             {
                 "name": "add",
                 "description": DESCRIPTION,
-                "parameters": add.parameters,
+                "parameters": expected_parameters,
             }
         ]
     }
+
+
+def test_gemini_translation_strips_unsupported_schema_keywords_recursively():
+    translated = to_gemini(add)
+    parameters = translated["functionDeclarations"][0]["parameters"]
+
+    assert "additionalProperties" not in parameters
+    assert "title" not in parameters
+    assert "title" not in parameters["properties"]["left"]

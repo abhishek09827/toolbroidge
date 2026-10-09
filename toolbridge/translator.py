@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from .decorator import Tool
 
 
@@ -29,7 +31,7 @@ def to_gemini(tool: Tool) -> dict:
             {
                 "name": tool.name,
                 "description": tool.description,
-                "parameters": tool.parameters,
+                "parameters": _to_gemini_schema(tool.parameters),
             }
         ]
     }
@@ -44,3 +46,24 @@ def translate(tool: Tool, provider: str) -> dict:
     if provider == "gemini":
         return to_gemini(tool)
     raise ValueError(f"Unsupported provider: {provider}")
+
+
+def _to_gemini_schema(schema: Any) -> Any:
+    if isinstance(schema, list):
+        return [_to_gemini_schema(item) for item in schema]
+    if not isinstance(schema, dict):
+        return schema
+
+    unsupported = {
+        "$defs",
+        "$schema",
+        "additionalProperties",
+        "default",
+        "examples",
+        "title",
+    }
+    return {
+        key: _to_gemini_schema(value)
+        for key, value in schema.items()
+        if key not in unsupported
+    }
