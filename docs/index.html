@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>toolbroidge — define tools once, run them on any LLM</title>
+<style>
+:root{--bg:#f6f5f1;--fg:#16181d;--mut:#5c6370;--card:#fff;--line:#dcd9cf;--acc:#0a7d5a;--acc2:#c2410c;--code:#eceae2;--vbg:#0d1117;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--fg:#e6e8ec;--mut:#8b94a3;--card:#141a23;--line:#242d3b;--acc:#3ddc97;--acc2:#ff9a5c;--code:#10161f;--vbg:#05080c}}
+:root[data-theme="dark"]{--bg:#0d1117;--fg:#e6e8ec;--mut:#8b94a3;--card:#141a23;--line:#242d3b;--acc:#3ddc97;--acc2:#ff9a5c;--code:#10161f;--vbg:#05080c}
+html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+.mono,code,pre{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+.w{max-width:980px;margin:0 auto;padding:0 20px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+nav b{font-family:ui-monospace,Menlo,monospace;font-size:18px}
+nav b i{color:var(--acc);font-style:normal}
+nav a{color:var(--mut);text-decoration:none;margin-left:18px;font-size:14px}
+nav a:hover{color:var(--fg)}
+.hero{padding:56px 0 40px}
+.tag{display:inline-block;font:12px ui-monospace,Menlo,monospace;color:var(--acc);border:1px solid var(--line);padding:4px 10px;border-radius:99px;margin-bottom:18px}
+h1{font-size:clamp(34px,6vw,60px);line-height:1.08;margin:0 0 18px;letter-spacing:-.02em}
+h1 em{font-style:normal;color:var(--acc)}
+.lead{font-size:19px;color:var(--mut);max-width:680px;margin:0 0 28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.pip{display:flex;align-items:center;gap:10px;background:var(--code);border:1px solid var(--line);border-radius:10px;padding:11px 14px;font:15px ui-monospace,Menlo,monospace;cursor:pointer}
+.pip span{color:var(--acc)}
+.btn{display:inline-block;background:var(--acc);color:var(--bg);padding:12px 20px;border-radius:10px;font-weight:600;text-decoration:none}
+.btn.o{background:none;color:var(--fg);border:1px solid var(--line)}
+section{padding:44px 0}
+h2{font-size:30px;margin:0 0 8px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 26px;max-width:640px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--mut);font-size:15px}
+.card .n{font:12px ui-monospace,monospace;color:var(--acc2)}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto;margin:0;font-size:13.5px;line-height:1.55}
+.k{color:var(--acc)}.s{color:var(--acc2)}.c{color:var(--mut)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border:0}
+th{color:var(--mut);font-weight:500}
+td code{font-size:13px}
+/* video */
+.vid{position:relative;aspect-ratio:16/9;background:var(--vbg);border-radius:16px;overflow:hidden;border:1px solid var(--line);color:#e6e8ec;font-family:ui-monospace,Menlo,monospace}
+.sc{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:6%;text-align:center;opacity:0;transition:opacity .2s;pointer-events:none}
+.sc.on{opacity:1}
+.sc h4{margin:0 0 4%;font:700 clamp(18px,4.4vw,44px)/1.15 system-ui,sans-serif;letter-spacing:-.02em}
+.sc h4 em{font-style:normal;color:#3ddc97}
+.sc small{font-size:clamp(10px,1.7vw,16px);color:#8b94a3}
+.sc pre{background:#10161f;border-color:#242d3b;color:#e6e8ec;text-align:left;font-size:clamp(8px,1.7vw,16px);padding:2.5%}
+.sc .k{color:#3ddc97}.sc .s{color:#ff9a5c}
+.chips{display:flex;gap:2%;margin-bottom:4%}
+.chip{border:1px solid #242d3b;border-radius:8px;padding:1.4% 2.4%;font-size:clamp(9px,1.8vw,17px);color:#8b94a3;opacity:.3;transform:scale(.9);transition:all .4s}
+.on .chip{opacity:1;transform:none;color:#e6e8ec;border-color:#3ddc97}
+.on .chip:nth-child(2){transition-delay:.15s}.on .chip:nth-child(3){transition-delay:.3s}
+.mess .chip{opacity:1;transform:none;color:#ff9a5c;border-color:#ff9a5c}
+.on.mess .chip{animation:sh .5s infinite alternate}
+@keyframes sh{to{transform:translateX(5px) rotate(1.5deg)}}
+.bars{width:70%}
+.bar{height:clamp(8px,2.2vw,22px);border-radius:6px;background:#3ddc97;margin:2% 0;width:0;text-align:left}
+.on .bar{animation:g .8s cubic-bezier(.2,.9,.3,1) forwards}
+.on .bar:nth-child(2){animation-delay:.1s;--w:80%}.on .bar:nth-child(3){animation-delay:.2s;--w:55%}
+.bar{--w:95%}
+@keyframes g{to{width:var(--w)}}
+.on h4{animation:pop .45s cubic-bezier(.2,1.5,.4,1) both}.on pre{animation:pop .45s .12s cubic-bezier(.2,1.5,.4,1) both}.on small{animation:fd .3s .4s both}.on .chips{animation:pop .4s both}.on h4 em{animation:glow .6s .3s both}
+@keyframes pop{from{transform:scale(.6) translateY(40px);opacity:0}}
+@keyframes fd{from{opacity:0;transform:translateY(10px)}}
+@keyframes glow{50%{text-shadow:0 0 30px #3ddc97;transform:scale(1.08)}}
+.vid:after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px);pointer-events:none}
+.ctl{display:flex;align-items:center;gap:12px;margin-top:12px}
+.ctl button{background:var(--acc);color:var(--bg);border:0;border-radius:8px;padding:8px 16px;font-weight:600;cursor:pointer}
+.prog{flex:1;height:5px;background:var(--line);border-radius:9px;overflow:hidden}
+.prog i{display:block;height:100%;width:0;background:var(--acc)}
+.cap{font-size:13px;color:var(--mut)}
+details{margin-top:14px;color:var(--mut);font-size:14px}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--mut);font-size:14px;margin-top:30px}
+footer a{color:var(--acc)}
+</style>
+</head>
+<body>
+<div class="w">
+<nav><b>tool<i>broidge</i></b><div><a href="#video">Pitch</a><a href="#how">How it works</a><a href="#start">Quickstart</a><a href="https://github.com/abhishek09827/toolbroidge">GitHub</a></div></nav>
+
+<header class="hero">
+<span class="tag">Python · Pydantic v2 · OpenAI / Anthropic / Gemini</span>
+<h1>Define tools once.<br><em>Run them on any LLM.</em></h1>
+<p class="lead">toolbroidge is a small Python library for agent loops. Write a type-annotated function, and it translates to each provider's tool schema, runs calls in parallel, and handles retries and refusals. No giant framework.</p>
+<div class="cta">
+<div class="pip" id="pip" title="Click to copy"><span>$</span> pip install toolbroidge</div>
+<a class="btn" href="https://github.com/abhishek09827/toolbroidge">View on GitHub</a>
+<a class="btn o" href="#video">▶ Watch the pitch</a>
+</div>
+</header>
+
+<section id="video">
+<div class="vid" id="vid">
+<div class="sc mess"><h4>Three providers.<br><em>Three tool formats.</em></h4><div class="chips"><div class="chip">{type:"function"…}</div><div class="chip">{input_schema…}</div><div class="chip">{functionDeclarations…}</div></div><small>Same tool. Rewritten again and again.</small></div>
+<div class="sc"><h4>Define it <em>once.</em></h4><pre><span class="k">@tool</span>(<span class="s">"Use when adding two numbers."</span>)
+<span class="k">def</span> add(left: int, right: int) -> int:
+    <span class="k">return</span> left + right</pre></div>
+<div class="sc"><h4>Run it <em>anywhere.</em></h4><div class="chips"><div class="chip">OpenAI</div><div class="chip">Anthropic</div><div class="chip">Gemini</div></div><small>Strict schemas, translated automatically.</small></div>
+<div class="sc"><h4>Parallel <em>by default.</em></h4><div class="bars"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div><small>Tool calls fan out, results correlate by call id.</small></div>
+<div class="sc"><h4>Typed. Retried. <em>Honest.</em></h4><pre><span class="c"># bad output → typed error → retry (up to 3)</span>
+<span class="k">if</span> isinstance(result.output, Refusal):
+    print(result.output.reason)</pre></div>
+<div class="sc"><h4>pip install <em>toolbroidge</em></h4><small>github.com/abhishek09827/toolbroidge</small></div>
+</div>
+<div class="ctl"><button id="pl">▶ Play</button><div class="prog"><i id="pg"></i></div><span class="cap" id="cp">6 scenes</span></div>
+</section>
+
+<section id="how">
+<h2>Everything an agent loop needs. Nothing it doesn't.</h2>
+<p class="sub">A small canonical tool model with strict provider schemas.</p>
+<div class="grid">
+<div class="card"><div class="n">01</div><h3>One tool definition</h3><p>Decorate a typed Python function. Pydantic v2 validates arguments and builds the schema.</p></div>
+<div class="card"><div class="n">02</div><h3>Provider translation</h3><p>Emits the correct wire shape for OpenAI, Anthropic, or Gemini from the same source.</p></div>
+<div class="card"><div class="n">03</div><h3>Concurrent execution</h3><p>Multiple tool calls run through a thread pool and are matched back by tool call id.</p></div>
+<div class="card"><div class="n">04</div><h3>Streaming reassembly</h3><p>Partial argument chunks are stitched back into complete tool calls.</p></div>
+<div class="card"><div class="n">05</div><h3>Structured output retries</h3><p>Parse or schema errors retry up to three times with the typed error fed back to the model.</p></div>
+<div class="card"><div class="n">06</div><h3>Explicit refusals</h3><p>Refusals return immediately as a <code>Refusal</code> object, so you branch on it instead of guessing.</p></div>
+</div>
+</section>
+
+<section>
+<h2>One tool, three wire shapes</h2>
+<p class="sub">What toolbroidge generates for you.</p>
+<div class="tw"><table>
+<tr><th>Provider</th><th>Tool wire shape</th></tr>
+<tr><td>OpenAI</td><td><code>{type:"function", function:{name, description, parameters, strict:true}}</code></td></tr>
+<tr><td>Anthropic</td><td><code>{name, description, input_schema}</code></td></tr>
+<tr><td>Gemini</td><td><code>{functionDeclarations:[{name, description, parameters}]}</code></td></tr>
+</table></div>
+</section>
+
+<section id="start">
+<h2>Quickstart</h2>
+<p class="sub">Install, define, run.</p>
+<div class="two">
+<pre><span class="c"># install (provider extras optional)</span>
+pip install toolbroidge
+pip install "toolbroidge[openai]"
+pip install "toolbroidge[anthropic]"
+pip install "toolbroidge[gemini]"</pre>
+<pre><span class="k">from</span> toolbroidge <span class="k">import</span> Agent, tool
+
+<span class="k">@tool</span>(<span class="s">"Use when adding two numbers."</span>)
+<span class="k">def</span> add(left: int, right: int) -> int:
+    <span class="k">return</span> left + right
+
+agent = Agent(provider=provider, tools=[add])
+print(agent.run(<span class="s">"What is 2 + 3?"</span>).output)</pre>
+</div>
+<p class="sub" style="margin-top:18px">Try it with your own key: <code>python3 examples/provider_demo.py --provider anthropic</code></p>
+</section>
+
+<section>
+<h2>Structured output, with a safety net</h2>
+<pre><span class="k">class</span> Answer(BaseModel):
+    value: int
+
+agent = Agent(provider=provider, tools=[], output_schema=Answer)
+result = agent.run(<span class="s">"Return a number"</span>)
+
+<span class="k">if</span> isinstance(result.output, Refusal):
+    print(result.output.reason)
+<span class="k">else</span>:
+    print(result.output.value)</pre>
+</section>
+
+<footer>toolbroidge by <a href="https://github.com/abhishek09827">Abhishek</a> · <a href="https://github.com/abhishek09827/toolbroidge">Source on GitHub</a></footer>
+</div>
+<script>
+(function(){
+var p=document.getElementById('pip');
+p.onclick=function(){try{navigator.clipboard.writeText('pip install toolbroidge');p.lastChild.textContent=' copied ✓'}catch(e){}};
+var sc=document.querySelectorAll('.sc'),pl=document.getElementById('pl'),pg=document.getElementById('pg'),cp=document.getElementById('cp');
+var D=3000,i=-1,t=null,run=false;
+function show(n){sc.forEach(function(s,k){s.classList.toggle('on',k===n)});cp.textContent='Scene '+(n+1)+' / '+sc.length;pg.style.transition='none';pg.style.width=(n/sc.length*100)+'%';requestAnimationFrame(function(){requestAnimationFrame(function(){pg.style.transition='width '+D+'ms linear';pg.style.width=((n+1)/sc.length*100)+'%'})})}
+function next(){i=(i+1)%sc.length;show(i);t=setTimeout(next,D)}
+function play(){run=true;pl.textContent='❚❚ Pause';next()}
+function stop(){run=false;clearTimeout(t);pl.textContent='▶ Play';i=-1;pg.style.transition='none'}
+pl.onclick=function(){run?stop():play()};
+sc[0].classList.add('on');
+if('IntersectionObserver' in window){new IntersectionObserver(function(e){if(e[0].isIntersecting&&!run&&i===-1){play()}else if(!e[0].isIntersecting&&run){stop();sc[0].classList.add('on')}},{threshold:.6}).observe(document.getElementById('vid'))}
+})();
+</script>
+</body>
+</html>
