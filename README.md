@@ -70,3 +70,85 @@ if isinstance(result.output, Refusal):
 else:
     print(result.output.value)
 ```
+
+## Provider API Key Demo
+
+The repository includes a simple smoke-test app at `examples/provider_demo.py`. It defines two tools once with `@tool`, translates them to the selected provider's tool schema, asks the model to call tools, executes returned calls in parallel, and prints correlated results by tool call id.
+
+Install the package and provider extras:
+
+```bash
+python3 -m pip install -e ".[openai]"
+python3 -m pip install -e ".[anthropic]"
+python3 -m pip install -e ".[gemini]"
+```
+
+Run with OpenAI:
+
+```bash
+export OPENAI_API_KEY="sk-..."
+python3 examples/provider_demo.py --provider openai
+```
+
+Run with Anthropic:
+
+```bash
+export ANTHROPIC_API_KEY="sk-ant-..."
+python3 examples/provider_demo.py --provider anthropic
+```
+
+Run with Gemini:
+
+```bash
+export GEMINI_API_KEY="..."
+python3 examples/provider_demo.py --provider gemini
+```
+
+Optional model overrides:
+
+```bash
+export OPENAI_MODEL="gpt-4o-mini"
+export ANTHROPIC_MODEL="claude-3-5-haiku-latest"
+export GEMINI_MODEL="gemini-1.5-flash"
+```
+
+## Deploying to PyPI
+
+1. Create PyPI and TestPyPI API tokens.
+2. Install release tools:
+
+```bash
+python3 -m pip install --upgrade build twine
+```
+
+3. Build the package:
+
+```bash
+python3 -m build
+```
+
+4. Check the artifacts:
+
+```bash
+python3 -m twine check dist/*
+```
+
+5. Rehearse on TestPyPI:
+
+```bash
+python3 -m twine upload --repository testpypi dist/*
+```
+
+6. Install from TestPyPI in a clean environment:
+
+```bash
+python3 -m pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ toolbridge
+```
+
+7. Publish to PyPI:
+
+```bash
+python3 -m twine upload dist/*
+```
+
+Use `__token__` as the username when `twine` prompts for credentials, and paste the API token as the password. Before publishing, make sure `pyproject.toml` has the intended version and that `dist/` only contains artifacts for that version.
